@@ -1,0 +1,31 @@
+class Solution {
+public:
+    unordered_map<string, vector<char>> mp;
+
+    bool dfs(string curr, string next, int idx) {
+        // If finished building current level
+        if (idx == curr.size() - 1) {
+            // If reached top
+            if (next.size() == 1) return true;
+            // Build next level
+            return dfs(next, "", 0);
+        }
+
+        string key = curr.substr(idx, 2);
+
+        if (mp.find(key) == mp.end()) return false;
+
+        for (char ch : mp[key]) {
+            if (dfs(curr, next + ch, idx + 1))
+                return true;
+        }
+        return false;
+    }
+
+    bool pyramidTransition(string bottom, vector<string>& allowed) {
+        for (string &s : allowed) {
+            mp[s.substr(0, 2)].push_back(s[2]);
+        }
+        return dfs(bottom, "", 0);
+    }
+};
