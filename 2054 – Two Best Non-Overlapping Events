@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int maxTwoEvents(vector<vector<int>>& events) {
+        int n = events.size();
+
+        // Sort events by start time
+        sort(events.begin(), events.end());
+
+        // Suffix max array of values
+        vector<int> suffixMax(n);
+        suffixMax[n - 1] = events[n - 1][2];
+
+        for (int i = n - 2; i >= 0; i--) {
+            suffixMax[i] = max(suffixMax[i + 1], events[i][2]);
+        }
+
+        int ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            int currValue = events[i][2];
+            ans = max(ans, currValue); // case of choosing only one event
+
+            int endTime = events[i][1];
+
+            // Binary search for first event starting at >= endTime + 1
+            int l = i + 1, r = n - 1;
+            int idx = -1;
+
+            while (l <= r) {
+                int mid = l + (r - l) / 2;
+                if (events[mid][0] >= endTime + 1) {
+                    idx = mid;
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            }
+
+            if (idx != -1) {
+                ans = max(ans, currValue + suffixMax[idx]);
+            }
+        }
+
+        return ans;
+    }
+};
