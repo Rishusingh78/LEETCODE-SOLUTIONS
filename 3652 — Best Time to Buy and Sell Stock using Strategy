@@ -1,0 +1,36 @@
+class Solution {
+public:
+    long long maxProfit(vector<int>& prices, vector<int>& strategy, int k) {
+        int n = prices.size();
+        
+        
+        long long baseProfit = 0;
+        for (int i = 0; i < n; i++) {
+            baseProfit += 1LL * strategy[i] * prices[i];
+        }
+
+       
+        vector<long long> prefPrice(n + 1, 0);
+        vector<long long> prefStrat(n + 1, 0);
+
+        for (int i = 0; i < n; i++) {
+            prefPrice[i + 1] = prefPrice[i] + prices[i];
+            prefStrat[i + 1] = prefStrat[i] + 1LL * strategy[i] * prices[i];
+        }
+
+        long long bestGain = 0;
+
+      
+        for (int l = 0; l + k <= n; l++) {
+            int r = l + k;
+            int mid = l + k / 2;
+
+            long long oldContribution = prefStrat[r] - prefStrat[l];
+            long long newContribution = prefPrice[r] - prefPrice[mid];
+
+            bestGain = max(bestGain, newContribution - oldContribution);
+        }
+
+        return baseProfit + bestGain;
+    }
+};
