@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int numberOfWays(string corridor) {
+        const long long MOD = 1e9 + 7;
+        long long seats = 0;
+        for (char c : corridor)
+            if (c == 'S')
+                seats++;
+
+        if (seats == 0 || seats % 2 == 1)
+            return 0;
+
+        long long ways = 1;
+        long long plantCount = 0;
+        long long seatSeen = 0;
+
+        for (char c : corridor) {
+            if (c == 'S') {
+                seatSeen++;
+                if (seatSeen > 2 && seatSeen % 2 == 1) {
+                    ways = (ways * (plantCount + 1)) % MOD;
+                    plantCount = 0;
+                }
+            } else if (seatSeen >= 2 && seatSeen % 2 == 0) {
+                plantCount++;
+            }
+        }
+
+        return ways;
+    }
+};
