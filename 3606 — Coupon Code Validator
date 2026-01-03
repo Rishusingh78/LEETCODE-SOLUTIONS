@@ -1,0 +1,45 @@
+class Solution {
+public:
+    vector<string> validateCoupons(vector<string>& code,
+                                   vector<string>& businessLine,
+                                   vector<bool>& isActive) {
+
+        unordered_map<string, vector<string>> mp;
+        unordered_set<string> validLines = {
+            "electronics", "grocery", "pharmacy", "restaurant"
+        };
+
+        int n = code.size();
+
+        for (int i = 0; i < n; i++) {
+            if (!isActive[i]) continue;
+            if (validLines.find(businessLine[i]) == validLines.end()) continue;
+            if (code[i].empty()) continue;
+
+            bool ok = true;
+            for (char c : code[i]) {
+                if (!isalnum(c) && c != '_') {
+                    ok = false;
+                    break;
+                }
+            }
+            if (!ok) continue;
+
+            mp[businessLine[i]].push_back(code[i]);
+        }
+
+        vector<string> order = {
+            "electronics", "grocery", "pharmacy", "restaurant"
+        };
+
+        vector<string> result;
+        for (string &b : order) {
+            auto &v = mp[b];
+            sort(v.begin(), v.end());
+            for (auto &s : v)
+                result.push_back(s);
+        }
+
+        return result;
+    }
+};
