@@ -1,0 +1,45 @@
+class Solution {
+public:
+    vector<int> countMentions(int numberOfUsers, vector<vector<string>>& events) {
+        vector<int> result(numberOfUsers, 0);
+        vector<int> onlineUntil(numberOfUsers, -1);
+
+        for (auto &e : events) {
+            int time = stoi(e[1]);
+
+            for (int i = 0; i < numberOfUsers; i++) {
+                if (onlineUntil[i] != -1 && onlineUntil[i] <= time) {
+                    onlineUntil[i] = -1;
+                }
+            }
+
+            if (e[0] == "OFFLINE") {
+                int id = stoi(e[2]);
+                onlineUntil[id] = time + 60;
+            } 
+            else {
+                string s = e[2];
+
+                if (s == "ALL") {
+                    for (int i = 0; i < numberOfUsers; i++)
+                        result[i]++;
+                } 
+                else if (s == "HERE") {
+                    for (int i = 0; i < numberOfUsers; i++)
+                        if (onlineUntil[i] == -1)
+                            result[i]++;
+                } 
+                else {
+                    stringstream ss(s);
+                    string token;
+                    while (ss >> token) {
+                        int id = stoi(token.substr(2));
+                        result[id]++;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+};
