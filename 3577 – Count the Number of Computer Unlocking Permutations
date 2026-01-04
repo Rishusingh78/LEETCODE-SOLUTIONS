@@ -1,0 +1,48 @@
+class Solution {
+public:
+    static const int MOD = 1e9 + 7;
+
+    int countPermutations(vector<int>& complexity) {
+        int n = complexity.size();
+
+        // Coordinate compression
+        vector<int> sorted = complexity;
+        sort(sorted.begin(), sorted.end());
+        sorted.erase(unique(sorted.begin(), sorted.end()), sorted.end());
+
+        int m = sorted.size();
+        vector<int> fenwick(m + 1, 0);
+
+        auto update = [&](int i) {
+            for (++i; i <= m; i += i & -i)
+                fenwick[i]++;
+        };
+
+        auto query = [&](int i) {
+            int sum = 0;
+            for (++i; i > 0; i -= i & -i)
+                sum += fenwick[i];
+            return sum;
+        };
+
+        long long ans = 1;
+
+        
+        update(lower_bound(sorted.begin(), sorted.end(), complexity[0]) - sorted.begin());
+
+        for (int i = 1; i < n; i++) {
+            int idx = lower_bound(sorted.begin(), sorted.end(), complexity[i]) - sorted.begin();
+
+            int smallerBefore = query(idx - 1);
+
+            if (smallerBefore == 0)
+                return 0;
+
+            ans = (ans * smallerBefore) % MOD;
+
+            update(idx);
+        }
+
+        return ans;
+    }
+};
