@@ -1,0 +1,35 @@
+class Solution {
+public:
+    static const int MOD = 1e9 + 7;
+
+    long long C2(long long x) {
+        return x * (x - 1) / 2;
+    }
+
+    int countTrapezoids(vector<vector<int>>& points) {
+        unordered_map<long long, long long> cnt;
+
+        
+        for (auto &p : points) {
+            cnt[p[1]]++;
+        }
+
+        vector<long long> ways;
+        for (auto &it : cnt) {
+            if (it.second >= 2) {
+                ways.push_back(C2(it.second));
+            }
+        }
+
+        long long sum = 0, squareSum = 0;
+        for (long long w : ways) {
+            sum = (sum + w) % MOD;
+            squareSum = (squareSum + w * w % MOD) % MOD;
+        }
+
+        long long ans = (sum * sum % MOD - squareSum + MOD) % MOD;
+        ans = ans * ((MOD + 1) / 2) % MOD; 
+
+        return (int)ans;
+    }
+};
