@@ -1,0 +1,29 @@
+class Solution {
+public:
+    const int MOD = 1e9 + 7;
+    long long total = 0;
+    long long ans = 0;
+    vector<long long> subs;
+
+    long long dfs(TreeNode* root) {
+        if (!root)
+            return 0;
+
+        long long sum = root->val + dfs(root->left) + dfs(root->right);
+
+        subs.push_back(sum);
+        total = sum;
+
+        return sum;
+    }
+
+    int maxProduct(TreeNode* root) {
+        dfs(root);
+
+        for (long long s : subs) {
+            ans = max(ans, s * (total - s));
+        }
+
+        return ans % MOD;
+    }
+};
