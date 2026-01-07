@@ -1,0 +1,39 @@
+class Solution {
+public:
+    vector<vector<int>> graph;
+    long long K;
+    int count = 0;
+
+    long long dfs(int node, int parent, vector<int>& values) {
+        long long sum = values[node];
+
+        for (int next : graph[node]) {
+            if (next == parent)
+                continue;
+
+            sum += dfs(next, node, values);
+        }
+
+        if (sum % K == 0) {
+            count++;
+            return 0;
+        }
+
+        return sum;
+    }
+
+    int maxKDivisibleComponents(int n, vector<vector<int>>& edges,
+                                vector<int>& values, int k) {
+        K = k;
+        graph.assign(n, {});
+
+        for (auto& e : edges) {
+            graph[e[0]].push_back(e[1]);
+            graph[e[1]].push_back(e[0]);
+        }
+
+        dfs(0, -1, values);
+
+        return count;
+    }
+};
