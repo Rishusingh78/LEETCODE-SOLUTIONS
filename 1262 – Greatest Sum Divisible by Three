@@ -1,0 +1,50 @@
+class Solution {
+public:
+    int maxSumDivThree(vector<int>& nums) {
+        int sum = 0;
+
+        
+        int min1 = INT_MAX, min11 = INT_MAX;
+        int min2 = INT_MAX, min22 = INT_MAX;
+
+        for (int num : nums) {
+            sum += num;
+
+            if (num % 3 == 1) {
+                if (num < min1) {
+                    min11 = min1;
+                    min1 = num;
+                } else if (num < min11) {
+                    min11 = num;
+                }
+            } 
+            else if (num % 3 == 2) {
+                if (num < min2) {
+                    min22 = min2;
+                    min2 = num;
+                } else if (num < min22) {
+                    min22 = num;
+                }
+            }
+        }
+
+        if (sum % 3 == 0) return sum;
+
+        if (sum % 3 == 1) {
+            int remove1 = min1;
+            int remove2 = (min2 == INT_MAX || min22 == INT_MAX) 
+                          ? INT_MAX 
+                          : min2 + min22;
+            int remove = min(remove1, remove2);
+            return remove == INT_MAX ? 0 : sum - remove;
+        }
+
+        // sum % 3 == 2
+        int remove1 = min2;
+        int remove2 = (min1 == INT_MAX || min11 == INT_MAX) 
+                      ? INT_MAX 
+                      : min1 + min11;
+        int remove = min(remove1, remove2);
+        return remove == INT_MAX ? 0 : sum - remove;
+    }
+};
