@@ -1,0 +1,50 @@
+class Solution {
+public:
+    long long maxPower(vector<int>& stations, int r, int k) {
+        int n = stations.size();
+        vector<long long> power(n, 0);
+
+        
+        long long window = 0;
+        for (int i = 0; i < n; i++) {
+            window += stations[i];
+            if (i > r) window -= stations[i - r - 1];
+            power[i] = window;
+        }
+        window = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            window += stations[i];
+            if (i + r + 1 < n) window -= stations[i + r + 1];
+            power[i] += window - stations[i];
+        }
+
+        auto can = [&](long long x) {
+            vector<long long> diff(n + 1, 0);
+            long long used = 0, currAdd = 0;
+
+            for (int i = 0; i < n; i++) {
+                currAdd += diff[i];
+                long long cur = power[i] + currAdd;
+
+                if (cur < x) {
+                    long long need = x - cur;
+                    used += need;
+                    if (used > k) return false;
+
+                    currAdd += need;
+                    int end = min(n, i + 2 * r + 1);
+                    if (end < n) diff[end] -= need;
+                }
+            }
+            return true;
+        };
+
+        long long lo = 0, hi = 1e14;
+        while (lo < hi) {
+            long long mid = (lo + hi + 1) / 2;
+            if (can(mid)) lo = mid;
+            else hi = mid - 1;
+        }
+        return lo;
+    }
+};
