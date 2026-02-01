@@ -1,0 +1,105 @@
+class Solution {
+public:
+    vector<long long> findXSum(vector<int>& nums, int k, int x) {
+
+        int n = nums.size();
+        unordered_map<int,int> freq;
+
+        
+        auto cmp = [](const pair<int,int>& a, const pair<int,int>& b){
+            if(a.first != b.first) return a.first < b.first;
+            return a.second < b.second;
+        };
+
+        set<pair<int,int>, decltype(cmp)> top(cmp), rest(cmp);
+
+        long long sum = 0;
+
+        auto add = [&](int v){
+            int f = freq[v];
+
+            if(f){
+                pair<int,int> p={f,v};
+                if(top.count(p)){
+                    top.erase(p);
+                    sum -= 1LL*f*v;
+                } else rest.erase(p);
+            }
+
+            freq[v]++;
+            rest.insert({freq[v],v});
+        };
+
+        auto removeVal = [&](int v){
+            int f = freq[v];
+            pair<int,int> p={f,v};
+
+            if(top.count(p)){
+                top.erase(p);
+                sum -= 1LL*f*v;
+            } else rest.erase(p);
+
+            freq[v]--;
+
+            if(freq[v] > 0)
+                rest.insert({freq[v],v});
+        };
+
+        auto rebalance = [&]() {
+
+            
+            while(top.size() < x && !rest.empty()){
+                auto it = prev(rest.end());
+                auto p = *it;
+                rest.erase(it);
+
+                top.insert(p);
+                sum += 1LL*p.first*p.second;
+            }
+
+            while(top.size() > x){
+                auto it = top.begin();
+                auto p = *it;
+
+                top.erase(it);
+                sum -= 1LL*p.first*p.second;
+
+                rest.insert(p);
+            }
+
+            
+            while(!top.empty() && !rest.empty()){
+                auto worstTop = *top.begin();
+                auto bestRest = *prev(rest.end());
+
+                if(bestRest > worstTop){
+                    top.erase(top.begin());
+                    rest.erase(prev(rest.end()));
+
+                    sum -= 1LL*worstTop.first*worstTop.second;
+                    sum += 1LL*bestRest.first*bestRest.second;
+
+                    top.insert(bestRest);
+                    rest.insert(worstTop);
+                }
+                else break;
+            }
+        };
+
+        vector<long long> ans;
+
+        for(int i=0;i<n;i++){
+            add(nums[i]);
+
+            if(i>=k)
+                removeVal(nums[i-k]);
+
+            rebalance();
+
+            if(i>=k-1)
+                ans.push_back(sum);
+        }
+
+        return ans;
+    }
+};
