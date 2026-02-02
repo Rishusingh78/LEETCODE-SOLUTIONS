@@ -1,0 +1,64 @@
+class Solution {
+public:
+    long long minimumCost(vector<int>& nums, int k, int dist) {
+        int n = nums.size();
+
+        multiset<int> small, large;
+        long long sum = 0;
+
+        int need = k - 1;
+        long long ans = LLONG_MAX;
+
+        auto add = [&](int x) {
+            if ((int)small.size() < need) {
+                small.insert(x);
+                sum += x;
+            } else {
+                if (!small.empty() && x < *small.rbegin()) {
+                    small.insert(x);
+                    sum += x;
+
+                    auto it = prev(small.end());
+                    large.insert(*it);
+                    sum -= *it;
+                    small.erase(it);
+                } else {
+                    large.insert(x);
+                }
+            }
+        };
+
+        auto remove = [&](int x) {
+            if (small.find(x) != small.end()) {
+                small.erase(small.find(x));
+                sum -= x;
+
+                if (!large.empty()) {
+                    auto it = large.begin();
+                    small.insert(*it);
+                    sum += *it;
+                    large.erase(it);
+                }
+            } else {
+                large.erase(large.find(x));
+            }
+        };
+
+        int left = 1;
+
+        for (int right = 1; right < n; right++) {
+            add(nums[right]);
+
+            if (right - left + 1 > dist + 1) {
+                remove(nums[left]);
+                left++;
+            }
+
+            if ((int)small.size() == need) {
+                ans = min(ans, sum);
+            }
+        }
+
+        return ans + nums[0];
+    }
+};
