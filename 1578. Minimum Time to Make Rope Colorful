@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int minCost(string colors, vector<int>& neededTime) {
+        int n = colors.size();
+        int total = 0;
+
+        int sum = neededTime[0];
+        int mx = neededTime[0];
+
+        for (int i = 1; i < n; ++i) {
+            if (colors[i] == colors[i-1]) {
+                sum += neededTime[i];
+                mx = max(mx, neededTime[i]);
+            } else {
+                total += (sum - mx);
+                sum = neededTime[i];
+                mx = neededTime[i];
+            }
+        }
+
+        total += (sum - mx);  // last group
+        return total;
+    }
+};
