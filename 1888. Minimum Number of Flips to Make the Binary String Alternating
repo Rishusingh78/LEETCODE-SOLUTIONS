@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int minFlips(string s) {
+        int n = s.size();
+        string str = s + s;
+
+        int alt1 = 0, alt2 = 0;
+        int ans = INT_MAX;
+
+        for (int i = 0; i < str.size(); i++) {
+            
+            char expected1 = (i % 2 == 0) ? '0' : '1';
+            char expected2 = (i % 2 == 0) ? '1' : '0';
+
+            if (str[i] != expected1) alt1++;
+            if (str[i] != expected2) alt2++;
+
+            if (i >= n) {
+                char prev = str[i - n];
+
+                char exp1 = ((i - n) % 2 == 0) ? '0' : '1';
+                char exp2 = ((i - n) % 2 == 0) ? '1' : '0';
+
+                if (prev != exp1) alt1--;
+                if (prev != exp2) alt2--;
+            }
+
+            if (i >= n - 1) {
+                ans = min(ans, min(alt1, alt2));
+            }
+        }
+
+        return ans;
+    }
+};
