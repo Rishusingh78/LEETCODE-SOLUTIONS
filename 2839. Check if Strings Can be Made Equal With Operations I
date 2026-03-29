@@ -1,0 +1,19 @@
+class Solution {
+public:
+    bool canBeEqual(string s1, string s2) {
+        
+        string g1_s1 = {s1[0], s1[2]};
+        string g1_s2 = {s2[0], s2[2]};
+        
+       
+        string g2_s1 = {s1[1], s1[3]};
+        string g2_s2 = {s2[1], s2[3]};
+        
+        sort(g1_s1.begin(), g1_s1.end());
+        sort(g1_s2.begin(), g1_s2.end());
+        sort(g2_s1.begin(), g2_s1.end());
+        sort(g2_s2.begin(), g2_s2.end());
+        
+        return g1_s1 == g1_s2 && g2_s1 == g2_s2;
+    }
+};
