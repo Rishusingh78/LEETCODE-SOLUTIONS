@@ -1,0 +1,23 @@
+class Solution {
+    public boolean isPalindrome(int x) {
+
+        // Negative numbers are not palindrome
+        // Numbers ending with 0 are also not palindrome
+        // except 0 itself
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+
+        int rev = 0;
+
+        // Reverse half of the number
+        while (x > rev) {
+            rev = rev * 10 + x % 10;
+            x /= 10;
+        }
+
+        // For even digits: x == rev
+        // For odd digits: x == rev / 10
+        return (x == rev || x == rev / 10);
+    }
+}
